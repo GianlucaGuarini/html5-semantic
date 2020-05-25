@@ -1,0 +1,190 @@
+<editor>
+  <form onsubmit={onSubmit}>
+    <textarea class='ace'></textarea>
+    <div class='right'>
+      <h1>HTML5 Outline Checker</h1>
+      <div class="controls">
+        <input type='hidden' name='input'>
+        <label>
+          Select snippet:
+          <select onchange={ updateSnippet }>
+            <option each={ snippet in Object.entries(state.snippets) } selected={ currentSnippet === snippet[0] } value={snippet[0]}>{snippet[0]}</option>
+          </select>
+        </label><br/>
+        <button type="submit">
+          Generate Outline
+        </button>
+      </div>
+      <div class="result" if=if={state.checkUrl}>
+        <h2>Outline Result</h2>
+        <iframe width="100%" height="220" src={state.checkUrl}></iframe>
+      </template>
+      <small>Powered by <a target='_blank' href='https://riot.js.org'>Riot.js</a></small>
+    </div>
+  </form>
+  <script>
+  const parsedUrl = new URL(window.location.href)
+
+  export default {
+    state: {
+    snippets: {
+        simple: `
+<h1>Main Title</h1>
+<h2>Sub Title</h2>
+    `,
+        inverse: `
+<h2>Main Title</h2>
+<h1>Sub Title</h1>
+    `,
+        main: `
+<h1>Main Title</h1>
+<h2>Sub Title</h2>
+<main>
+  <h1>Nested title</h1>
+</main>
+    `,
+        fancy: `
+<section>
+   <h1>Main section title</h1>
+</section>
+<h6>Small title</h6>
+<h1>Important title</h1>
+    `,
+    article: `
+<article>
+  <h1>Nested title</h1>
+</article>
+<h1>Main Title</h1>
+<h2>Sub Title</h2>
+    `
+      },
+      checkUrl: null,
+      currentSnippet: parsedUrl.searchParams.get('snippet') || 'simple'
+    },
+
+    editor: null,
+
+    setEditorContent() {
+      const content = this.state.snippets[this.state.currentSnippet].trim()
+      this.editor.setValue(content)
+    },
+
+    updateSnippet(e) {
+      e.preventUpdate = true
+      this.update({
+        checkUrl: '',
+        currentSnippet: e.currentTarget.value
+      })
+      this.setEditorContent()
+    },
+
+    onSubmit(e) {
+      e.preventDefault()
+      this.update({
+        checkUrl: `https://gsnedders.html5.org/outliner/process.py?input=${this.editor.getValue()}`,
+      })
+    },
+
+    onMounted() {
+      this.editor = ace.edit(this.$('.ace'))
+      this.editor.setTheme('ace/theme/nord_dark')
+      this.editor.getSession().setMode('ace/mode/html')
+      this.editor.getSession().setUseWorker(false)
+      this.editor.setFontSize('24px')
+      this.setEditorContent()
+    },
+  }
+
+  </script>
+
+  <style>
+    :host {
+      font-size: 1.2rem;
+      font-family: Helvetica Neue;
+    }
+
+    form {
+      display: flex;
+    }
+    select {
+      margin: 0 8px;
+    }
+
+    h1 {
+      font-size: 1.6em;
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      font-size: 1.2em;
+      margin-bottom: 16px;
+    }
+
+    .right {
+      background: rgb(24, 38, 46);
+      padding: 16px 32px;
+      width: 65%;
+      border-left: 1px solid #222;
+      color: white;
+    }
+
+    a {
+      color: #c30f36;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    small {
+      position: absolute;
+      bottom: 16px;
+      right: 16px;
+    }
+
+    label,
+    .controls {
+      display: flex;
+      align-items: center;
+    }
+
+    select, button {
+      padding: 8px 16px;
+      font-size: 1em;
+      margin: 0 0 0 16px;
+      border: none;
+      color: #002636;
+      background: white;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    select {
+      background: white url("data:image/svg+xml;utf8,<svg viewBox='0 0 140 140' width='24' height='24' xmlns='http://www.w3.org/2000/svg'><g><path d='m121.3,34.6c-1.6-1.6-4.2-1.6-5.8,0l-51,51.1-51.1-51.1c-1.6-1.6-4.2-1.6-5.8,0-1.6,1.6-1.6,4.2 0,5.8l53.9,53.9c0.8,0.8 1.8,1.2 2.9,1.2 1,0 2.1-0.4 2.9-1.2l53.9-53.9c1.7-1.6 1.7-4.2 0.1-5.8z' fill='002636'/></g></svg>") no-repeat;
+      background-position: right 12px top 60%;
+      padding: 8px 42px 8px 16px;
+    }
+
+    iframe {
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .result {
+      padding: 16px 0;
+    }
+
+    .ace_editor {
+      height: 100vh;
+      width: 35%;
+    }
+
+    .ace_gutter {
+      background: rgb(24, 38, 46);
+    }
+
+    .ace_content {
+      background: rgb(27, 43, 52);
+    }
+  </style>
+</editor>

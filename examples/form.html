@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>HTML5 Outline Checker</title>
+<link rel='stylesheet' href='http://meyerweb.com/eric/tools/css/reset/reset200802.css'>
+<script src='https://unpkg.com/riot@4.12.4/riot+compiler.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.10/ace.js'></script>
+<script type='riot' src='editor.riot'></script>
+</head>
+<body>
+<editor></editor>
+<script>
+  /* global riot */
+  riot.compile().then(() => {
+    riot.mount('editor')
+  })
+</script>
+</body>
+</html>
